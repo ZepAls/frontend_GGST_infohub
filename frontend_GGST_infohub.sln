@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34928.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "frontend_GGST_infohub", "frontend_GGST_infohub\frontend_GGST_infohub.csproj", "{149BBF32-924B-4754-ACC0-FEE2D4B77B7B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{149BBF32-924B-4754-ACC0-FEE2D4B77B7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{149BBF32-924B-4754-ACC0-FEE2D4B77B7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{149BBF32-924B-4754-ACC0-FEE2D4B77B7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{149BBF32-924B-4754-ACC0-FEE2D4B77B7B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6C0A2953-FB72-417F-AF51-27E0C6890032}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,116 @@
+﻿@page "/Proposal/edit"
+@using frontend_GGST_infohub.DTO
+@using System.Text.Json
+@using System.Text
+@using System.Data;
+@inject NavigationManager NavigationManager
+
+
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h4>ProposalDTO</h4>
+<hr />
+@if (proposal is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+
+            <EditForm Model="@proposal" OnValidSubmit="UpdateProposalDTO">
+                <div class="mb-3">
+                    <label for="character" class="form-control">Character</label>
+                    <InputText id="character" @bind-Value="proposal.character" />
+                </div>
+                <div class="mb-3">
+                    <label for="paragraphName" class="form-control">paragraphName</label>
+                    <InputText id="paragraphName" @bind-Value="proposal.paragraphName" />
+                </div>
+                <div class="mb-3">
+                    <label for="text" class="form-control">text</label>
+                    <InputText id="text" @bind-Value="proposal.text" />
+                </div>
+                <div class="mb-3">
+                    <label for="accepted" class="form-control">accepted</label>
+                    <InputCheckbox id="accepted" @bind-Value="proposal.accepted" />
+                </div>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/proposal">Back to List</a>
+</div>
+
+@code {
+
+    string GetQueryParm(string parmName)
+    {
+        var uriBuilder = new UriBuilder(NavigationManager.Uri);
+        var q = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+        return q[parmName] ?? "";
+    }
+
+    public ProposalDTO proposal { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+        HttpClient client = new HttpClient();
+        string url = "https://proposal-service.purpledune-96ff6deb.ukwest.azurecontainerapps.io/api/Proposal/" + GetQueryParm("id");
+        var response = await client.GetAsync(url);
+        var result = await response.Content.ReadAsStringAsync();
+        proposal = JsonSerializer.Deserialize<ProposalDTO>(result);
+
+        if (proposal is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see https://aka.ms/RazorPagesCRUD.
+    public async Task UpdateProposalDTO()
+    {
+        //change proposal
+        var data = new
+        {
+            id = proposal.id,
+            character = proposal.character,
+            accepted = proposal.accepted,
+            paragraphName = proposal.paragraphName,
+            text = proposal.text
+        };
+        var jsonData = JsonSerializer.Serialize(data);
+        var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+
+        using (var client = new HttpClient())
+        {
+            try
+            {
+                // Send the PUT request
+                HttpResponseMessage response = await client.PutAsync("https://proposal-service.purpledune-96ff6deb.ukwest.azurecontainerapps.io/api/Proposal", content);
+
+                // Ensure we get a successful response.
+                response.EnsureSuccessStatusCode();
+
+                // Read and process the response body (if needed)
+                string responseBody = await response.Content.ReadAsStringAsync();
+            }
+            catch (HttpRequestException e)
+            {
+                // Handle any exceptions that occur during the request
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine("Message :{0} ", e.Message);
+            }
+        }
+        NavigationManager.NavigateTo("/proposal");
+    }
+}

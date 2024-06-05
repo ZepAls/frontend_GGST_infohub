@@ -1,0 +1,62 @@
+﻿@page "/proposal/details"
+@using frontend_GGST_infohub.DTO
+@using System.Text.Json
+@using System.Text
+@using System.Data;
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h4>ProposalDTO</h4>
+    <hr />
+    @if (proposal is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-2">Character</dt>
+            <dd class="col-sm-10">@proposal.character</dd>
+            <dt class="col-sm-2">Accepted</dt>
+            <dd class="col-sm-10">@proposal.accepted</dd>
+            <dt class="col-sm-2">ParagraphName</dt>
+            <dd class="col-sm-10">@proposal.paragraphName</dd>
+            <dt class="col-sm-2">Text</dt>
+            <dd class="col-sm-10">@proposal.text</dd>
+        </dl>
+        <div>
+            <a href="@($"/proposal/edit?id={proposal.id}")">Edit</a> |
+            <a href="@($"/proposal")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    string GetQueryParm(string parmName)
+    {
+        var uriBuilder = new UriBuilder(NavigationManager.Uri);
+        var q = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+        return q[parmName] ?? "";
+    }
+
+    public ProposalDTO proposal { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        HttpClient client = new HttpClient();
+        string url = "https://proposal-service.purpledune-96ff6deb.ukwest.azurecontainerapps.io/api/Proposal/" + GetQueryParm("id");
+        var response = await client.GetAsync(url);
+        var result = await response.Content.ReadAsStringAsync();
+        proposal = JsonSerializer.Deserialize<ProposalDTO>(result);
+
+        if (proposal is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

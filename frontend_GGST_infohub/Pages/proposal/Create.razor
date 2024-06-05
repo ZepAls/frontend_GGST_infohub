@@ -1,0 +1,86 @@
+﻿@page "/proposal/create"
+@using frontend_GGST_infohub.DTO
+@using System.Text.Json
+@using System.Text
+@using System.Data;
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create Proposal</h1>
+<h4>Proposal</h4>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="@proposal" OnValidSubmit="AddProposalDTO" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+            <div class="mb-3">
+                <label for="character" class="form-label">Character:</label>
+                <InputText id="character" @bind-Value="proposal.character" class="form-control" />
+                <ValidationMessage For="() => proposal.character" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="accepted" class="form-label">Accepted:</label>
+                <InputCheckbox id="accepted" @bind-Value="proposal.accepted" class="form-check-input" />
+                <ValidationMessage For="() => proposal.accepted" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="paragraphname" class="form-label">ParagraphName:</label>
+                <InputText id="paragraphname" @bind-Value="proposal.paragraphName" class="form-control" />
+                <ValidationMessage For="() => proposal.paragraphName" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="text" class="form-label">Text:</label>
+                <InputText id="text" @bind-Value="proposal.text" class="form-control" />
+                <ValidationMessage For="() => proposal.text" class="text-danger" />
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+
+    public ProposalDTO proposal { get; set; } = new();
+
+    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task AddProposalDTO()
+    {
+        //change proposal
+        var data = new
+        {
+            id = proposal.id,
+            character = proposal.character,
+            accepted = proposal.accepted,
+            paragraphName = proposal.paragraphName,
+            text = proposal.text
+        };
+        var jsonData = JsonSerializer.Serialize(data);
+        var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+
+        using (var client = new HttpClient())
+        {
+            try
+            {
+                // Send the PUT request
+                HttpResponseMessage response = await client.PostAsync("https://proposal-service.purpledune-96ff6deb.ukwest.azurecontainerapps.io/api/Proposal", content);
+
+                // Ensure we get a successful response.
+                response.EnsureSuccessStatusCode();
+
+                // Read and process the response body (if needed)
+                string responseBody = await response.Content.ReadAsStringAsync();
+            }
+            catch (HttpRequestException e)
+            {
+                // Handle any exceptions that occur during the request
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine("Message :{0} ", e.Message);
+            }
+        }
+        NavigationManager.NavigateTo("/proposal");
+    }
+}

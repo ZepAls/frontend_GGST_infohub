@@ -1,0 +1,60 @@
+﻿@page "/proposal"
+@using frontend_GGST_infohub.DTO
+@using System.Text.Json
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="proposal/create">Create New</a>
+</p>
+<div class="row">
+    <table class="arrowes-table table-striped">
+        <thead>
+            <tr>
+                <th>character</th>
+                <th>accepted</th>
+                <th>paragraph title</th>
+                <th>content</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        @if (!(DTOs == null))
+        {
+            @foreach (ProposalDTO proposalDTO in DTOs)
+            {
+                <tr>
+                    <td>@proposalDTO.character</td>
+                    <td>@proposalDTO.accepted</td>
+                    <td>@proposalDTO.paragraphName</td>
+                    <td>@proposalDTO.text</td>
+                    <td>
+                        <a href="@($"proposal/edit?id={proposalDTO.id}")">Edit</a> |
+                        <a href="@($"proposal/details?id={proposalDTO.id}")">Details</a> |
+                        <a href="@($"proposal/delete?id={proposalDTO.id}")">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <h5>there are no proposals</h5>
+        }
+    </table>
+</div>
+
+
+@code {
+    HttpClient client = new HttpClient();
+    List<ProposalDTO> DTOs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await client.GetAsync("https://proposal-service.purpledune-96ff6deb.ukwest.azurecontainerapps.io/api/Proposal");
+        var result = await response.Content.ReadAsStringAsync();
+        DTOs = JsonSerializer.Deserialize<List<ProposalDTO>>(result);
+    }
+}
