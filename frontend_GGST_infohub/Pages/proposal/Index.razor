@@ -1,10 +1,9 @@
-﻿@page "/proposal"
+﻿@page "/Proposal"
 @using frontend_GGST_infohub.DTO
 @using System.Text.Json
 @using Auth0.AspNetCore.Authentication
-@using System.Security.Claims
 @inject NavigationManager NavigationManager
-
+@attribute [Authorize]
 
 <PageTitle>Index</PageTitle>
 

@@ -15,15 +15,7 @@ builder.Services
         options.ClientId = builder.Configuration["Auth0:ClientId"];
     });
 
-builder.Services.AddRazorPages(options =>
-{
-    options.Conventions.AuthorizePage("/proposal");
-});
-
 var app = builder.Build();
-
-app.UseAuthentication();
-app.UseAuthorization();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -41,5 +33,8 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();
